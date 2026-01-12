@@ -1,17 +1,19 @@
 package com.florido.expense_tracker_api.controllers;
 
 import com.florido.expense_tracker_api.controllers.DTOs.TransacaoDTO;
+import com.florido.expense_tracker_api.controllers.mappers.TransacaoMapper;
 import com.florido.expense_tracker_api.models.Transacao;
 import com.florido.expense_tracker_api.services.TransacaoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/transacoes")
@@ -19,10 +21,11 @@ import java.util.UUID;
 public class TransacaoController implements GenericController{
 
     private final TransacaoService transacaoService;
+    private final TransacaoMapper transacaoMapper;
 
     @PostMapping
     public ResponseEntity<Object> salvar(@RequestBody @Valid TransacaoDTO dto){
-        var transacao = dto.mapearParaTransacao();
+        Transacao transacao = transacaoMapper.toEntity(dto);
         transacaoService.salvar(transacao);
 
         URI location = gerarHandlerLocation(transacao.getId());
@@ -36,42 +39,27 @@ public class TransacaoController implements GenericController{
 
         List<TransacaoDTO> list = transacoes
                 .stream()
-                .map(x -> new TransacaoDTO(
-                        x.getId(),
-                        x.getValor(),
-                        x.getTipo(),
-                        x.getCategoria(),
-                        x.getData())).toList();
+                .map(transacaoMapper::toDTO)
+                .collect(Collectors.toList());
 
         return ResponseEntity.ok(list);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getById(String id){
-        UUID idTransacao = UUID.fromString(id);
-        Optional<Transacao> optionalTransacao = transacaoService.getById(idTransacao);
-        if(optionalTransacao.isPresent()){
-            Transacao transacao = optionalTransacao.get();
-            TransacaoDTO transacaoDTO = new TransacaoDTO(
-                    transacao.getId(),
-                    transacao.getValor(),
-                    transacao.getTipo(),
-                    transacao.getCategoria(),
-                    transacao.getData());
-            return ResponseEntity.ok(transacaoDTO);
-        }
-        return ResponseEntity.notFound().build();
+        return transacaoService.getById(UUID.fromString(id))
+                .map(transacao -> {
+                    transacaoMapper.toDTO(transacao);
+                    return ResponseEntity.ok().build();
+                }).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable String id){
-        UUID idTransacao = UUID.fromString(id);
-        Optional<Transacao> optionalTransacao = transacaoService.getById(idTransacao);
-        if(!optionalTransacao.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-
-        transacaoService.delete(optionalTransacao.get());
-        return ResponseEntity.noContent().build();
+        return transacaoService.getById(UUID.fromString(id))
+                .map(transacao ->  {
+                    transacaoService.delete(transacao);
+                    return ResponseEntity.ok().build();
+                }).orElseGet(() ->  ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 }

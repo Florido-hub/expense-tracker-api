@@ -5,8 +5,11 @@ import com.florido.expense_tracker_api.enums.TipoTransacao;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -14,6 +17,7 @@ import java.util.UUID;
 @Table(name = "tb_transacao")
 @Getter
 @Setter
+@EntityListeners(AuditingEntityListener.class)
 public class Transacao {
 
     @Id
@@ -37,6 +41,10 @@ public class Transacao {
 
     @Column(name = "Data_transacao")
     private LocalDate data;
+
+    @LastModifiedDate
+    @Column(name = "data_atualizacao")
+    private LocalDateTime dataAtualizacao;
 
     @Override
     public boolean equals(Object o) {
