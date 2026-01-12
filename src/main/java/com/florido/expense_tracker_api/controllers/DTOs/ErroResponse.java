@@ -1,0 +1,15 @@
+package com.florido.expense_tracker_api.controllers.DTOs;
+
+import org.springframework.http.HttpStatus;
+
+import java.util.List;
+
+public record ErroResponse(
+        int status,
+        String mensagem,
+        List<ErroCampo> erros
+) {
+    public static ErroResponse respostaPadrao(String mensagem){
+        return new ErroResponse(HttpStatus.BAD_REQUEST.value(), mensagem, List.of());
+    }
+}
