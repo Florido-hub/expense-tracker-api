@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHeandler {
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErroResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
         List<FieldError> fieldErrors = e.getFieldErrors();
         List<ErroCampo> erros = fieldErrors
@@ -24,7 +24,7 @@ public class GlobalExceptionHeandler {
                 .map(fe -> new ErroCampo(fe.getField(), fe.getDefaultMessage()))
                 .collect(Collectors.toList());
         return new ErroResponse(
-                HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                HttpStatus.BAD_REQUEST.value(),
                 "Erro de validacao",
                 erros);
     }

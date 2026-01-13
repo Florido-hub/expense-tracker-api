@@ -3,7 +3,6 @@ package com.florido.expense_tracker_api.services;
 import com.florido.expense_tracker_api.models.Transacao;
 import com.florido.expense_tracker_api.repositories.TransacaoRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

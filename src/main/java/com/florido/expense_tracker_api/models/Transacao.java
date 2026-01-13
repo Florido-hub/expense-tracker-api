@@ -26,7 +26,7 @@ public class Transacao {
     private UUID id;
 
     @Column(name = "valor")
-    private long valor;
+    private double valor;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo")

@@ -13,8 +13,9 @@ public record TransacaoDTO(
 
         UUID id,
 
-        @Positive
-        Long valor,
+        @Positive(message = "Valores negativos não são permitidos")
+        @NotNull(message = "Campo obrigatorio")
+        double valor,
 
         @NotNull(message = "Escolha um tipo válido(ENTRADA/SAIDA")
         TipoTransacao tipo,
