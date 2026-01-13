@@ -8,6 +8,7 @@ import com.florido.expense_tracker_api.repositories.TransacaoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -18,8 +19,31 @@ public class EstatisticasService {
 
     private final TransacaoRepository transacaoRepository;
 
-    public EstatisticaDTO calcularEstatisticasTransacoes(){
+    public EstatisticaDTO getEstatisticas() {
         List<Transacao> transacoes = transacaoRepository.findAll();
+        return calcularEstatisticas(transacoes);
+    }
+
+    public EstatisticaDTO getEstatisticasData(LocalDate inicio, LocalDate fim) {
+
+        if (inicio == null || fim == null) {
+            throw new IllegalArgumentException("É necessário informar tanto a data inicial quanto a data final.");
+        }
+
+        if (inicio.isAfter(fim)) {
+            throw new IllegalArgumentException("A data inicial não pode ser maior que a data final.");
+        }
+
+        List<Transacao> transacoes = transacaoRepository.findAll();
+
+        List<Transacao> filtro = transacoes.stream()
+                .filter(t -> !t.getData().isBefore(inicio) && !t.getData().isAfter(fim))
+                .toList();
+
+        return calcularEstatisticas(filtro);
+    }
+
+    public EstatisticaDTO calcularEstatisticas(List<Transacao> transacoes){
 
         double entradas = transacoes
                 .stream()

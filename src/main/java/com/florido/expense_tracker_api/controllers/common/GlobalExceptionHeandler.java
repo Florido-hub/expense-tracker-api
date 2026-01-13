@@ -28,4 +28,10 @@ public class GlobalExceptionHeandler {
                 "Erro de validacao",
                 erros);
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErroResponse handleIllegalArgumentException(IllegalArgumentException e){
+        return ErroResponse.respostaPadrao(e.getMessage());
+    }
 }
