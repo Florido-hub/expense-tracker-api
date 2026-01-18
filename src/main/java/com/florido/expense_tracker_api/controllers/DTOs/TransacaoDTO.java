@@ -2,7 +2,6 @@ package com.florido.expense_tracker_api.controllers.DTOs;
 
 import com.florido.expense_tracker_api.enums.CategoriaTransacao;
 import com.florido.expense_tracker_api.enums.TipoTransacao;
-import com.florido.expense_tracker_api.models.Transacao;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
@@ -26,12 +25,4 @@ public record TransacaoDTO(
         @NotNull(message = "Campo obrigatorio")
         LocalDate data
 ) {
-    public Transacao mapearParaTransacao(){
-        Transacao transacao = new Transacao();
-        transacao.setValor(this.valor);
-        transacao.setTipo(this.tipo);
-        transacao.setCategoria(this.categoria);
-        transacao.setData(this.data);
-        return transacao;
-    }
 }

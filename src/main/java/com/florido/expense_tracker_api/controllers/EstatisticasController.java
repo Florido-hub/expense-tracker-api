@@ -18,6 +18,7 @@ public class EstatisticasController {
 
     private final EstatisticasService estatisticasService;
 
+    // /estatisticas
     @GetMapping()
     public ResponseEntity<Object> getEstatisticas() {
         EstatisticaDTO estatistica = estatisticasService.getEstatisticas();
@@ -25,7 +26,7 @@ public class EstatisticasController {
         return ResponseEntity.ok(estatistica);
     }
 
-    //inicio=2025-01-01&fim=2025-01-31
+    //  /estatisticas/filter?inicio=2025-01-01&fim=2025-01-31
     @GetMapping("/filter")
     public ResponseEntity<Object> getEstatisticasData(
             @RequestParam(required = false) LocalDate inicio,

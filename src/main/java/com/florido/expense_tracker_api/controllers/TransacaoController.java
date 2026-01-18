@@ -6,14 +6,14 @@ import com.florido.expense_tracker_api.models.Transacao;
 import com.florido.expense_tracker_api.services.TransacaoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/transacoes")
@@ -34,15 +34,11 @@ public class TransacaoController implements GenericController{
     }
 
     @GetMapping
-    public ResponseEntity<List<TransacaoDTO>> getTransacoes() {
-        List<Transacao> transacoes = transacaoService.getTransacoes();
+    public ResponseEntity<Page<TransacaoDTO>> getTransacoes(Pageable pageable) {
+        Page<Transacao> transacoes = transacaoService.getTransacoes(pageable);
+        Page<TransacaoDTO> transacaoDTO = transacoes.map(transacaoMapper::toDTO);
 
-        List<TransacaoDTO> list = transacoes
-                .stream()
-                .map(transacaoMapper::toDTO)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(list);
+        return ResponseEntity.ok(transacaoDTO);
     }
 
     @GetMapping("/{id}")
